@@ -1,6 +1,7 @@
 import { Container, Typography, Box, Grid } from "@mui/material";
 import { getAllPosts } from "@services/posts";
 import ArticleCard from "@components/ArticleCard";
+import Hero from "@components/Hero";
 
 export const revalidate = 60;
 
@@ -9,57 +10,26 @@ export default async function HomePage() {
 
   return (
     <>
-      {/* Hero Section */}
-      <Box
-        sx={{
-          background: "linear-gradient(135deg, #232F3E 0%, #37475A 100%)",
-          color: "#FFFFFF",
-          py: { xs: 6, md: 10 },
-          textAlign: "center",
-        }}
-      >
-        <Container maxWidth="md">
-          <Typography
-            variant="h1"
-            sx={{
-              fontSize: { xs: "2rem", md: "3rem" },
-              mb: 2,
-            }}
-          >
-            MLU-<span style={{ color: "#FF9900" }}>EXPLAIN</span>
-          </Typography>
-          <Typography
-            variant="h2"
-            sx={{
-              fontWeight: 400,
-              fontSize: { xs: "1rem", md: "1.25rem" },
-              color: "#CCCCCC",
-              maxWidth: 600,
-              mx: "auto",
-            }}
-          >
-            Visual explanations of core machine learning concepts
-          </Typography>
-        </Container>
-      </Box>
+      <Hero />
 
       {/* Articles Grid */}
-      <Container maxWidth="lg" sx={{ py: 6 }}>
+      <Container maxWidth="md" sx={{ py: 8 }}>
         <Typography
-          variant="h3"
+          variant="h2"
           sx={{
-            mb: 4,
+            mb: 5,
             fontWeight: 700,
             textAlign: "center",
-            color: "text.primary",
+            color: "#2D2D2D",
+            fontSize: { xs: "1.8rem", md: "2.2rem" },
           }}
         >
-          Explore Published Articles
+          Últimos Artigos
         </Typography>
 
-        <Grid container spacing={3}>
+        <Grid container spacing={4}>
           {posts.map((post) => (
-            <Grid key={post._id} size={{ xs: 12, sm: 6, md: 4 }}>
+            <Grid key={post._id} size={{ xs: 12, sm: 6 }}>
               <ArticleCard post={post} />
             </Grid>
           ))}
@@ -70,7 +40,7 @@ export default async function HomePage() {
             variant="body1"
             sx={{ textAlign: "center", mt: 4, color: "text.secondary" }}
           >
-            No articles published yet. Add posts on Sanity Studio!
+            Nenhum artigo publicado ainda. Adicione posts no Sanity Studio!
           </Typography>
         )}
       </Container>

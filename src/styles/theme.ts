@@ -5,63 +5,70 @@ import { createTheme } from "@mui/material/styles";
 const theme = createTheme({
   palette: {
     primary: {
-      main: "#232F3E",
-      light: "#37475A",
-      dark: "#131A22",
+      main: "#2D2D2D",
+      light: "#4A4A4A",
+      dark: "#1A1A1A",
     },
     secondary: {
-      main: "#FF9900",
-      light: "#FFB84D",
-      dark: "#CC7A00",
+      main: "#E85D3A",
+      light: "#FF7F5C",
+      dark: "#C44425",
     },
     background: {
-      default: "#FAFAFA",
+      default: "#FDF9F3",
       paper: "#FFFFFF",
     },
     text: {
-      primary: "#232F3E",
-      secondary: "#555B6E",
+      primary: "#2D2D2D",
+      secondary: "#6B6B6B",
     },
   },
   typography: {
-    fontFamily: '"Inter", "Roboto", "Helvetica", "Arial", sans-serif',
+    fontFamily: '"Caveat", "Patrick Hand", "Inter", sans-serif',
     h1: {
-      fontSize: "2.5rem",
-      fontWeight: 800,
-      letterSpacing: "-0.02em",
-      textTransform: "uppercase",
+      fontFamily: '"Caveat", cursive',
+      fontSize: "3rem",
+      fontWeight: 700,
+      letterSpacing: "0.01em",
     },
     h2: {
-      fontSize: "1.75rem",
+      fontFamily: '"Caveat", cursive',
+      fontSize: "2rem",
       fontWeight: 700,
-      letterSpacing: "-0.01em",
     },
     h3: {
-      fontSize: "1.35rem",
+      fontFamily: '"Caveat", cursive',
+      fontSize: "1.6rem",
       fontWeight: 600,
     },
     body1: {
+      fontFamily: '"Inter", sans-serif',
       fontSize: "1.05rem",
       lineHeight: 1.7,
-      color: "#555B6E",
+      color: "#6B6B6B",
     },
     body2: {
+      fontFamily: '"Inter", sans-serif',
       fontSize: "0.95rem",
       lineHeight: 1.6,
     },
+    button: {
+      fontFamily: '"Inter", sans-serif',
+    },
   },
   shape: {
-    borderRadius: 12,
+    borderRadius: 4,
   },
   components: {
     MuiCard: {
       styleOverrides: {
         root: {
-          boxShadow: "0 2px 12px rgba(0,0,0,0.08)",
+          border: "2px solid #2D2D2D",
+          boxShadow: "4px 4px 0px #2D2D2D",
           transition: "transform 0.2s ease, box-shadow 0.2s ease",
           "&:hover": {
-            transform: "translateY(-4px)",
-            boxShadow: "0 8px 24px rgba(0,0,0,0.12)",
+            transform: "translate(-2px, -2px)",
+            boxShadow: "6px 6px 0px #2D2D2D",
           },
         },
       },
@@ -71,14 +78,22 @@ const theme = createTheme({
         root: {
           textTransform: "none",
           fontWeight: 600,
-          borderRadius: 8,
+          borderRadius: 4,
+          border: "2px solid #2D2D2D",
+          boxShadow: "3px 3px 0px #2D2D2D",
+          "&:hover": {
+            transform: "translate(-1px, -1px)",
+            boxShadow: "4px 4px 0px #2D2D2D",
+          },
         },
       },
     },
     MuiChip: {
       styleOverrides: {
         root: {
-          fontWeight: 500,
+          fontWeight: 600,
+          border: "1.5px solid #2D2D2D",
+          borderRadius: 4,
         },
       },
     },

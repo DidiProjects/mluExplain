@@ -28,8 +28,9 @@ export default function ArticleCard({ post }: ArticleCardProps) {
         display: "flex",
         flexDirection: "column",
         height: "100%",
-        borderRadius: 3,
+        borderRadius: 1,
         overflow: "hidden",
+        backgroundColor: "#FFFFFF",
       }}
     >
       {imageUrl && (
@@ -38,7 +39,10 @@ export default function ArticleCard({ post }: ArticleCardProps) {
           height="200"
           image={imageUrl}
           alt={post.title}
-          sx={{ objectFit: "cover" }}
+          sx={{
+            objectFit: "cover",
+            borderBottom: "2px solid #2D2D2D",
+          }}
         />
       )}
       <CardContent
@@ -51,8 +55,12 @@ export default function ArticleCard({ post }: ArticleCardProps) {
         }}
       >
         <Typography
-          variant="h2"
-          sx={{ fontSize: "1.25rem", fontWeight: 700, textTransform: "uppercase" }}
+          variant="h3"
+          sx={{
+            fontSize: "1.4rem",
+            fontWeight: 700,
+            color: "#2D2D2D",
+          }}
         >
           {post.title}
         </Typography>
@@ -65,10 +73,11 @@ export default function ArticleCard({ post }: ArticleCardProps) {
                 label={cat.title}
                 size="small"
                 sx={{
-                  backgroundColor: "secondary.light",
-                  color: "primary.dark",
+                  backgroundColor: "#FFF3ED",
+                  color: "#E85D3A",
                   fontWeight: 600,
                   fontSize: "0.7rem",
+                  fontFamily: '"Inter", sans-serif',
                 }}
               />
             ))}
@@ -80,11 +89,17 @@ export default function ArticleCard({ post }: ArticleCardProps) {
             component={Link}
             href={`/posts/${post.slug.current}`}
             variant="contained"
-            color="secondary"
             size="small"
-            sx={{ fontWeight: 700 }}
+            sx={{
+              fontWeight: 700,
+              backgroundColor: "#E85D3A",
+              color: "#FFF",
+              "&:hover": {
+                backgroundColor: "#C44425",
+              },
+            }}
           >
-            Dive In
+            Ler artigo →
           </Button>
         </Box>
       </CardContent>

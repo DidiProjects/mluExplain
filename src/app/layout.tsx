@@ -1,8 +1,4 @@
 import type { Metadata } from "next";
-import { ThemeRegistry } from "@components/index";
-import { Header } from "@components/index";
-import { Footer } from "@components/index";
-import { Box } from "@mui/material";
 
 export const metadata: Metadata = {
   title: "MLU-Explain | Visual ML Concepts",
@@ -29,23 +25,7 @@ export default function RootLayout({
           rel="stylesheet"
         />
       </head>
-      <body>
-        <ThemeRegistry>
-          <Box
-            sx={{
-              display: "flex",
-              flexDirection: "column",
-              minHeight: "100vh",
-            }}
-          >
-            <Header />
-            <Box component="main" sx={{ flexGrow: 1 }}>
-              {children}
-            </Box>
-            <Footer />
-          </Box>
-        </ThemeRegistry>
-      </body>
+      <body>{children}</body>
     </html>
   );
 }

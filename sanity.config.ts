@@ -9,8 +9,8 @@ export default defineConfig({
   name: 'default',
   title: 'mluExplain',
 
-  projectId: 'ofbs36xd',
-  dataset: 'production',
+  projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID!,
+  dataset: process.env.NEXT_PUBLIC_SANITY_DATASET!,
 
   basePath: '/admin',
 

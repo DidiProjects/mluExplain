@@ -14,6 +14,7 @@ export default defineConfig({
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
+      "@root": path.resolve(__dirname, "./"),
       "@components": path.resolve(__dirname, "./src/components"),
       "@layouts": path.resolve(__dirname, "./src/layouts"),
       "@hooks": path.resolve(__dirname, "./src/hooks"),
@@ -22,6 +23,7 @@ export default defineConfig({
       "@styles": path.resolve(__dirname, "./src/styles"),
       "@types": path.resolve(__dirname, "./src/types"),
       "@services": path.resolve(__dirname, "./src/services"),
+      "@sanity": path.resolve(__dirname, "./src/sanity"),
     },
   },
 });

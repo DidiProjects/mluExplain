@@ -20,6 +20,7 @@
     ],
     "paths": {
       "@/*": ["./src/*"],
+      "@root/*": ["./*"],
       "@components/*": ["./src/components/*"],
       "@layouts/*": ["./src/layouts/*"],
       "@hooks/*": ["./src/hooks/*"],
@@ -27,7 +28,8 @@
       "@lib/*": ["./src/lib/*"],
       "@styles/*": ["./src/styles/*"],
       "@types/*": ["./src/types/*"],
-      "@services/*": ["./src/services/*"]
+      "@services/*": ["./src/services/*"],
+      "@sanity/*": ["./src/sanity/*"],
     }
   },
   "include": [

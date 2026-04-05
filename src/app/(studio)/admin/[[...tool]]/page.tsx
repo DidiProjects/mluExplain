@@ -1,5 +1,5 @@
 import { NextStudio } from 'next-sanity/studio'
-import config from '../../../../../sanity.config'
+import config from '@root/sanity.config'
 
 export const dynamic = 'force-static'
 

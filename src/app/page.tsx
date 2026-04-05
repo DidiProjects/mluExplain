@@ -1,66 +1,79 @@
-import Image from "next/image";
-import styles from "./page.module.css";
+import { Container, Typography, Box, Grid } from "@mui/material";
+import { getAllPosts } from "@services/posts";
+import ArticleCard from "@components/ArticleCard";
 
-export default function Home() {
+export const revalidate = 60;
+
+export default async function HomePage() {
+  const posts = await getAllPosts();
+
   return (
-    <div className={styles.page}>
-      <main className={styles.main}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className={styles.intro}>
-          <h1>To get started, edit the page.tsx file.</h1>
-          <p>
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className={styles.ctas}>
-          <a
-            className={styles.primary}
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+    <>
+      {/* Hero Section */}
+      <Box
+        sx={{
+          background: "linear-gradient(135deg, #232F3E 0%, #37475A 100%)",
+          color: "#FFFFFF",
+          py: { xs: 6, md: 10 },
+          textAlign: "center",
+        }}
+      >
+        <Container maxWidth="md">
+          <Typography
+            variant="h1"
+            sx={{
+              fontSize: { xs: "2rem", md: "3rem" },
+              mb: 2,
+            }}
           >
-            <Image
-              className={styles.logo}
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className={styles.secondary}
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+            MLU-<span style={{ color: "#FF9900" }}>EXPLAIN</span>
+          </Typography>
+          <Typography
+            variant="h2"
+            sx={{
+              fontWeight: 400,
+              fontSize: { xs: "1rem", md: "1.25rem" },
+              color: "#CCCCCC",
+              maxWidth: 600,
+              mx: "auto",
+            }}
           >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
+            Visual explanations of core machine learning concepts
+          </Typography>
+        </Container>
+      </Box>
+
+      {/* Articles Grid */}
+      <Container maxWidth="lg" sx={{ py: 6 }}>
+        <Typography
+          variant="h3"
+          sx={{
+            mb: 4,
+            fontWeight: 700,
+            textAlign: "center",
+            color: "text.primary",
+          }}
+        >
+          Explore Published Articles
+        </Typography>
+
+        <Grid container spacing={3}>
+          {posts.map((post) => (
+            <Grid key={post._id} size={{ xs: 12, sm: 6, md: 4 }}>
+              <ArticleCard post={post} />
+            </Grid>
+          ))}
+        </Grid>
+
+        {posts.length === 0 && (
+          <Typography
+            variant="body1"
+            sx={{ textAlign: "center", mt: 4, color: "text.secondary" }}
+          >
+            No articles published yet. Add posts on Sanity Studio!
+          </Typography>
+        )}
+      </Container>
+    </>
   );
 }

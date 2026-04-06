@@ -1,14 +1,17 @@
 "use client";
 
-import { memo, Suspense, lazy, useMemo } from "react";
+import { memo, Suspense, lazy } from "react";
 import { Box, Typography, Skeleton } from "@mui/material";
 import Image from "next/image";
-import type { SectionMedia, VisualizationType, ScrollAnimationConfig } from "@/types";
+import type { SectionMedia, VisualizationType } from "@/types";
 import { urlFor } from "@lib/sanity";
-import { useScrollProgress } from "@/hooks";
+import { useMediaStates } from "@/hooks";
 
-// Import animated visualization components
-import { visualizationComponents as animatedVisualizations } from "@components/MediaComponentsAnimated";
+// Import stateful visualization components (states-based animations)
+import {
+  statefulVisualizations,
+  VISUALIZATION_STATES,
+} from "@components/MediaComponentsStateful";
 
 // Lazy load static visualizations as fallback
 const staticVisualizationComponents = {
@@ -312,44 +315,31 @@ const LottieMedia = memo(function LottieMedia({
 });
 
 // Visualization renderer (pre-built SVG components)
-// Supports scroll-driven animations when enabled in CMS
+// Uses discrete states that progress as user scrolls through content
 const VisualizationMedia = memo(function VisualizationMedia({
   visualizationType,
-  scrollAnimation,
 }: {
   visualizationType?: VisualizationType;
-  scrollAnimation?: ScrollAnimationConfig;
 }) {
-  // Parse animation config from CMS
-  // startOffset: where animation STARTS (80 = near bottom of viewport)
-  // endOffset: where animation ENDS (20 = near top of viewport)
-  const animConfig: ScrollAnimationConfig = useMemo(
-    () => ({
-      enabled: scrollAnimation?.enabled ?? true, // Default: animations enabled
-      easing: scrollAnimation?.easing ?? "easeOut",
-      startOffset: scrollAnimation?.startOffset ?? 90, // Animation starts when element is 90% down viewport
-      endOffset: scrollAnimation?.endOffset ?? 10, // Animation ends when element is 10% from top
-      scrubMode: scrollAnimation?.scrubMode ?? "scrub",
-    }),
-    [scrollAnimation]
-  );
+  // Get number of states for this visualization type
+  const totalStates = visualizationType
+    ? VISUALIZATION_STATES[visualizationType] || 1
+    : 1;
 
-  // Use scroll progress hook
-  const { progress, ref } = useScrollProgress(animConfig);
+  // Use states-based scroll tracking
+  const { state, stateProgress, ref } = useMediaStates(totalStates);
 
   if (!visualizationType) return null;
 
-  // If scroll animation is enabled, use animated component
-  if (animConfig.enabled) {
-    const AnimatedComponent = animatedVisualizations[visualizationType];
-    
-    if (AnimatedComponent) {
-      return (
-        <Box ref={ref}>
-          <AnimatedComponent progress={progress} />
-        </Box>
-      );
-    }
+  // Get stateful component
+  const StatefulComponent = statefulVisualizations[visualizationType];
+
+  if (StatefulComponent) {
+    return (
+      <Box ref={ref}>
+        <StatefulComponent state={state} stateProgress={stateProgress} />
+      </Box>
+    );
   }
 
   // Fallback to static component (lazy loaded)
@@ -422,10 +412,7 @@ function MediaRendererComponent({ media }: MediaRendererProps) {
 
     case "visualization":
       content = (
-        <VisualizationMedia
-          visualizationType={media.visualizationType}
-          scrollAnimation={media.scrollAnimation}
-        />
+        <VisualizationMedia visualizationType={media.visualizationType} />
       );
       break;
 

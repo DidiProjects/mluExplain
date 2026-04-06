@@ -98,9 +98,6 @@ export interface SectionMedia {
   // Visualization
   visualizationType?: VisualizationType;
 
-  // Scroll Animation (for visualizations)
-  scrollAnimation?: ScrollAnimationConfig;
-
   // Common
   caption?: string;
   aspectRatio?: "auto" | "16/9" | "4/3" | "1/1" | "9/16";

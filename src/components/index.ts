@@ -6,6 +6,9 @@ export { default as ThemeRegistry } from "./ThemeRegistry";
 export { StickyMedia } from "./StickyMedia";
 export { MediaRenderer } from "./MediaRenderer";
 export * from "./MediaComponents";
-// Export only the visualization map from animated components (avoid name conflicts)
-export { visualizationComponents as animatedVisualizations } from "./MediaComponentsAnimated";
-export type { AnimatedMediaProps } from "./MediaComponentsAnimated";
+// Export stateful visualization components (scroll-driven states)
+export {
+  statefulVisualizations,
+  VISUALIZATION_STATES,
+  type StatefulMediaProps,
+} from "./MediaComponentsStateful";

@@ -6,3 +6,4 @@ export {
   type EasingFunction,
   type ScrubMode,
 } from "./useScrollProgress";
+export { useMediaStates } from "./useMediaStates";

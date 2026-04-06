@@ -64,6 +64,15 @@ export type EmbedType =
   | "codesandbox"
   | "other";
 
+// Scroll animation configuration
+export interface ScrollAnimationConfig {
+  enabled?: boolean;
+  easing?: "linear" | "easeOut" | "easeInOut" | "spring";
+  startOffset?: number;
+  endOffset?: number;
+  scrubMode?: "scrub" | "playOnce" | "playReverse";
+}
+
 export interface SectionMedia {
   _type: "sectionMedia";
   mediaType: MediaType;
@@ -88,6 +97,9 @@ export interface SectionMedia {
 
   // Visualization
   visualizationType?: VisualizationType;
+
+  // Scroll Animation (for visualizations)
+  scrollAnimation?: ScrollAnimationConfig;
 
   // Common
   caption?: string;

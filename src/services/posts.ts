@@ -74,6 +74,13 @@ const fullPostFields = `
         }
       },
       visualizationType,
+      scrollAnimation{
+        enabled,
+        easing,
+        startOffset,
+        endOffset,
+        scrubMode
+      },
       caption,
       aspectRatio
     }

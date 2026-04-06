@@ -157,6 +157,68 @@ export default defineType({
       hidden: ({ parent }) => parent?.mediaType !== "visualization",
     }),
 
+    // Scroll-driven animation settings
+    defineField({
+      name: "scrollAnimation",
+      title: "Scroll Animation",
+      type: "object",
+      description: "Configure how the visualization animates as user scrolls",
+      hidden: ({ parent }) => parent?.mediaType !== "visualization",
+      fields: [
+        {
+          name: "enabled",
+          title: "Enable Scroll Animation",
+          type: "boolean",
+          description: "Animate the visualization based on scroll position",
+          initialValue: true,
+        },
+        {
+          name: "easing",
+          title: "Animation Easing",
+          type: "string",
+          options: {
+            list: [
+              { title: "Linear", value: "linear" },
+              { title: "Ease Out", value: "easeOut" },
+              { title: "Ease In Out", value: "easeInOut" },
+              { title: "Spring", value: "spring" },
+            ],
+          },
+          initialValue: "easeOut",
+        },
+        {
+          name: "startOffset",
+          title: "Start Offset (%)",
+          type: "number",
+          description: "When animation starts (0 = top of viewport, 100 = bottom)",
+          validation: (Rule) => Rule.min(0).max(100),
+          initialValue: 80,
+        },
+        {
+          name: "endOffset",
+          title: "End Offset (%)",
+          type: "number",
+          description: "When animation completes (0 = top of viewport, 100 = bottom)",
+          validation: (Rule) => Rule.min(0).max(100),
+          initialValue: 20,
+        },
+        {
+          name: "scrubMode",
+          title: "Scrub Mode",
+          type: "string",
+          description: "How animation responds to scroll",
+          options: {
+            list: [
+              { title: "Scrub (follows scroll)", value: "scrub" },
+              { title: "Play Once (trigger then play)", value: "playOnce" },
+              { title: "Play & Reverse", value: "playReverse" },
+            ],
+          },
+          initialValue: "scrub",
+        },
+      ],
+    }),
+
     // Common fields
     defineField({
       name: "caption",

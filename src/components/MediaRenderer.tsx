@@ -5,13 +5,10 @@ import { Box, Typography, Skeleton } from "@mui/material";
 import Image from "next/image";
 import type { SectionMedia, VisualizationType } from "@/types";
 import { urlFor } from "@lib/sanity";
-import { useMediaStates } from "@/hooks";
+import { useContentLinkedState, type StateMarkerInfo } from "@/hooks";
 
 // Import stateful visualization components (states-based animations)
-import {
-  statefulVisualizations,
-  VISUALIZATION_STATES,
-} from "@components/MediaComponentsStateful";
+import { statefulVisualizations } from "@components/MediaComponentsStateful";
 
 // Lazy load static visualizations as fallback
 const staticVisualizationComponents = {
@@ -99,6 +96,7 @@ const staticVisualizationComponents = {
 
 interface MediaRendererProps {
   media: SectionMedia;
+  stateMarkers?: StateMarkerInfo[];
 }
 
 // Loading skeleton for media
@@ -315,19 +313,16 @@ const LottieMedia = memo(function LottieMedia({
 });
 
 // Visualization renderer (pre-built SVG components)
-// Uses discrete states that progress as user scrolls through content
+// Uses discrete states that progress as content markers are scrolled into view
 const VisualizationMedia = memo(function VisualizationMedia({
   visualizationType,
+  stateMarkers = [],
 }: {
   visualizationType?: VisualizationType;
+  stateMarkers?: StateMarkerInfo[];
 }) {
-  // Get number of states for this visualization type
-  const totalStates = visualizationType
-    ? VISUALIZATION_STATES[visualizationType] || 1
-    : 1;
-
-  // Use states-based scroll tracking
-  const { state, stateProgress, ref } = useMediaStates(totalStates);
+  // Use content-linked state tracking based on markers in content
+  const { state } = useContentLinkedState(stateMarkers);
 
   if (!visualizationType) return null;
 
@@ -336,8 +331,8 @@ const VisualizationMedia = memo(function VisualizationMedia({
 
   if (StatefulComponent) {
     return (
-      <Box ref={ref}>
-        <StatefulComponent state={state} stateProgress={stateProgress} />
+      <Box>
+        <StatefulComponent state={state} />
       </Box>
     );
   }
@@ -364,7 +359,7 @@ const VisualizationMedia = memo(function VisualizationMedia({
  * Generic media renderer component.
  * Renders different media types based on the mediaType field.
  */
-function MediaRendererComponent({ media }: MediaRendererProps) {
+function MediaRendererComponent({ media, stateMarkers }: MediaRendererProps) {
   const { mediaType, caption, aspectRatio } = media;
 
   let content: React.ReactNode = null;
@@ -412,7 +407,10 @@ function MediaRendererComponent({ media }: MediaRendererProps) {
 
     case "visualization":
       content = (
-        <VisualizationMedia visualizationType={media.visualizationType} />
+        <VisualizationMedia
+          visualizationType={media.visualizationType}
+          stateMarkers={stateMarkers}
+        />
       );
       break;
 

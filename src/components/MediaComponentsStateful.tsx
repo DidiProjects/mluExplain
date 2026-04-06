@@ -31,8 +31,8 @@ export const VISUALIZATION_STATES: Record<VisualizationType, number> = {
 export interface StatefulMediaProps {
   /** Current state index (0 to totalStates - 1) */
   state: number;
-  /** Progress within current state (0 to 1) for smooth transitions */
-  stateProgress: number;
+  /** Progress within current state (0 to 1) for smooth transitions (optional, defaults to 1) */
+  stateProgress?: number;
 }
 
 // Utility: check if a state is active (reached)
@@ -40,14 +40,15 @@ const isStateActive = (currentState: number, targetState: number): boolean =>
   currentState >= targetState;
 
 // Utility: get transition progress into a state
+// stateProgress defaults to 1 (instant transition) when not provided
 const getStateTransition = (
   currentState: number,
-  stateProgress: number,
+  stateProgress: number | undefined,
   targetState: number
 ): number => {
   if (currentState > targetState) return 1;
   if (currentState < targetState) return 0;
-  return stateProgress;
+  return stateProgress ?? 1;
 };
 
 // Base styles for media cards

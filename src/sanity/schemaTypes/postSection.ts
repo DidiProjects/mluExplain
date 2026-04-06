@@ -132,6 +132,40 @@ export default defineType({
             },
           },
         }),
+        // State marker for media visualization states
+        defineArrayMember({
+          type: "object",
+          name: "stateMarker",
+          title: "📍 Media State Marker",
+          fields: [
+            {
+              name: "stateIndex",
+              title: "State Number",
+              type: "number",
+              description: "Which visualization state to show when this marker is centered (starts at 0)",
+              validation: (Rule) => Rule.required().min(0),
+              initialValue: 0,
+            },
+            {
+              name: "label",
+              title: "Label (optional)",
+              type: "string",
+              description: "A label to help identify this marker in the editor",
+            },
+          ],
+          preview: {
+            select: {
+              stateIndex: "stateIndex",
+              label: "label",
+            },
+            prepare({ stateIndex, label }) {
+              return {
+                title: `📍 State ${stateIndex ?? 0}${label ? `: ${label}` : ""}`,
+                subtitle: "Media state marker",
+              };
+            },
+          },
+        }),
       ],
       validation: (Rule) => Rule.required(),
     }),

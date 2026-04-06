@@ -7,3 +7,7 @@ export {
   type ScrubMode,
 } from "./useScrollProgress";
 export { useMediaStates } from "./useMediaStates";
+export {
+  useContentLinkedState,
+  type StateMarkerInfo,
+} from "./useContentLinkedState";

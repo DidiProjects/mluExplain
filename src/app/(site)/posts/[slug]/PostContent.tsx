@@ -1,6 +1,6 @@
 "use client";
 
-import { memo } from "react";
+import { memo, useMemo } from "react";
 import { Box, Typography } from "@mui/material";
 import { PortableText } from "@portabletext/react";
 import { MediaRenderer } from "@components/MediaRenderer";
@@ -9,7 +9,9 @@ import type {
   PostSection as PostSectionType,
   CodeBlock,
   MathBlock,
+  StateMarker,
 } from "@/types";
+import type { StateMarkerInfo } from "@/hooks";
 import styles from "./PostContent.module.css";
 
 interface PostContentProps {
@@ -205,8 +207,33 @@ const portableTextComponents = {
         {value.inline ? `$${value.latex}$` : `$$${value.latex}$$`}
       </Box>
     ),
+    stateMarker: ({ value }: { value: StateMarker }) => (
+      <Box
+        id={`state-marker-${value._key}`}
+        data-state-index={value.stateIndex}
+        sx={{
+          // Invisible marker element - used for scroll position tracking
+          height: 0,
+          overflow: "hidden",
+          visibility: "hidden",
+        }}
+        aria-hidden="true"
+      />
+    ),
   },
 };
+
+// Helper to extract state markers from content
+function extractStateMarkers(
+  content: PostSectionType["content"]
+): StateMarkerInfo[] {
+  return content
+    .filter((block): block is StateMarker => block._type === "stateMarker")
+    .map((marker) => ({
+      key: marker._key,
+      stateIndex: marker.stateIndex,
+    }));
+}
 
 // Single section renderer
 const SectionRenderer = memo(function SectionRenderer({
@@ -218,6 +245,12 @@ const SectionRenderer = memo(function SectionRenderer({
 }) {
   const hasMedia = !!section.media;
   const isEven = index % 2 === 0;
+
+  // Extract state markers from content for media state tracking
+  const stateMarkers = useMemo(
+    () => extractStateMarkers(section.content),
+    [section.content]
+  );
 
   // Section without media - full width
   if (!hasMedia) {
@@ -274,7 +307,7 @@ const SectionRenderer = memo(function SectionRenderer({
           </Box>
         </Box>
         <StickyMedia>
-          <MediaRenderer media={section.media!} />
+          <MediaRenderer media={section.media!} stateMarkers={stateMarkers} />
         </StickyMedia>
       </Box>
     </Box>

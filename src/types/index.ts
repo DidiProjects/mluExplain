@@ -120,12 +120,20 @@ export interface CodeBlock {
   filename?: string;
 }
 
+// State marker for media visualization states
+export interface StateMarker {
+  _type: "stateMarker";
+  _key: string;
+  stateIndex: number;
+  label?: string;
+}
+
 // Post section (topic within a post)
 export interface PostSection {
   _type: "postSection";
   _key: string;
   title: string;
-  content: (PortableTextBlock | CodeBlock | MathBlock)[];
+  content: (PortableTextBlock | CodeBlock | MathBlock | StateMarker)[];
   media?: SectionMedia;
 }
 

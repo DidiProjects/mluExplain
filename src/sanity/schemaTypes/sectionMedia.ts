@@ -20,7 +20,6 @@ export default defineType({
           { title: "GIF/Animation", value: "gif" },
           { title: "Embed (YouTube, CodePen, etc.)", value: "embed" },
           { title: "Lottie Animation", value: "lottie" },
-          { title: "Interactive Visualization", value: "visualization" },
         ],
         layout: "radio",
       },
@@ -128,35 +127,6 @@ export default defineType({
       hidden: ({ parent }) => parent?.mediaType !== "lottie",
     }),
 
-    // Interactive Visualization (code-based)
-    defineField({
-      name: "visualizationType",
-      title: "Visualization Type",
-      type: "string",
-      description: "Type of pre-built visualization component",
-      options: {
-        list: [
-          { title: "Neural Network", value: "neural-network" },
-          { title: "Gradient Descent", value: "gradient-descent" },
-          { title: "Decision Tree", value: "decision-tree" },
-          { title: "Confusion Matrix", value: "confusion-matrix" },
-          { title: "Loss Chart", value: "loss-chart" },
-          { title: "Data Flow", value: "data-flow" },
-          { title: "Transformer Architecture", value: "transformer" },
-          { title: "Attention Mechanism", value: "attention" },
-          { title: "Convolution Operation", value: "convolution" },
-          { title: "CNN Architecture", value: "cnn-architecture" },
-          { title: "Pooling Layer", value: "pooling" },
-          { title: "Transfer Learning", value: "transfer-learning" },
-          { title: "Overfitting Visualization", value: "overfitting" },
-          { title: "RAG Pipeline", value: "rag-pipeline" },
-          { title: "Embedding Space", value: "embedding-space" },
-          { title: "Regularization", value: "regularization" },
-        ],
-      },
-      hidden: ({ parent }) => parent?.mediaType !== "visualization",
-    }),
-
     // Common fields
     defineField({
       name: "caption",
@@ -186,22 +156,21 @@ export default defineType({
     select: {
       mediaType: "mediaType",
       caption: "caption",
-      visualizationType: "visualizationType",
       image: "image",
     },
-    prepare({ mediaType, caption, visualizationType, image }) {
+    prepare({ mediaType, caption, image }) {
       const typeLabels: Record<string, string> = {
         image: "🖼️ Image",
         video: "🎬 Video",
         gif: "🎞️ GIF",
         embed: "📺 Embed",
         lottie: "✨ Lottie",
-        visualization: "📊 Visualization",
+
       };
 
       return {
         title: typeLabels[mediaType] || "Media",
-        subtitle: caption || visualizationType || "",
+        subtitle: caption || "",
         media: image,
       };
     },

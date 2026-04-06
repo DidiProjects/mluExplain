@@ -36,26 +36,7 @@ export type MediaType =
   | "video"
   | "gif"
   | "embed"
-  | "lottie"
-  | "visualization";
-
-export type VisualizationType =
-  | "neural-network"
-  | "gradient-descent"
-  | "decision-tree"
-  | "confusion-matrix"
-  | "loss-chart"
-  | "data-flow"
-  | "transformer"
-  | "attention"
-  | "convolution"
-  | "cnn-architecture"
-  | "pooling"
-  | "transfer-learning"
-  | "overfitting"
-  | "rag-pipeline"
-  | "embedding-space"
-  | "regularization";
+  | "lottie";
 
 export type EmbedType =
   | "youtube"
@@ -95,9 +76,6 @@ export interface SectionMedia {
   lottieUrl?: string;
   lottieFile?: SanityFile;
 
-  // Visualization
-  visualizationType?: VisualizationType;
-
   // Common
   caption?: string;
   aspectRatio?: "auto" | "16/9" | "4/3" | "1/1" | "9/16";
@@ -121,6 +99,22 @@ export interface CodeBlock {
 }
 
 // State marker for media visualization states
+export interface MediaAsset {
+  _id: string;
+  _type: "mediaAsset";
+  identifier: SanitySlug;
+  label: string;
+  group?: string;
+  image: SanityImage & { asset: { _ref: string; _type: "reference"; _id?: string; url?: string } };
+}
+
+export interface MediaMarker {
+  _type: "mediaMarker";
+  _key: string;
+  media?: MediaAsset;
+  label?: string;
+}
+
 export interface StateMarker {
   _type: "stateMarker";
   _key: string;
@@ -133,7 +127,7 @@ export interface PostSection {
   _type: "postSection";
   _key: string;
   title: string;
-  content: (PortableTextBlock | CodeBlock | MathBlock | StateMarker)[];
+  content: (PortableTextBlock | CodeBlock | MathBlock | MediaMarker | StateMarker)[];
   media?: SectionMedia;
 }
 

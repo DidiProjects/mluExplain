@@ -1,114 +1,14 @@
 "use client";
 
-import { memo, Suspense, lazy } from "react";
-import { Box, Typography, Skeleton } from "@mui/material";
+import { memo } from "react";
+import { Box, Typography } from "@mui/material";
 import Image from "next/image";
-import type { SectionMedia, VisualizationType } from "@/types";
+import type { SectionMedia } from "@/types";
 import { urlFor } from "@lib/sanity";
-import { useContentLinkedState, type StateMarkerInfo } from "@/hooks";
-
-// Import stateful visualization components (states-based animations)
-import { statefulVisualizations } from "@components/MediaComponentsStateful";
-
-// Lazy load static visualizations as fallback
-const staticVisualizationComponents = {
-  "neural-network": lazy(() =>
-    import("@components/MediaComponents").then((m) => ({
-      default: m.NeuralNetworkMedia,
-    }))
-  ),
-  "gradient-descent": lazy(() =>
-    import("@components/MediaComponents").then((m) => ({
-      default: m.GradientDescentMedia,
-    }))
-  ),
-  "decision-tree": lazy(() =>
-    import("@components/MediaComponents").then((m) => ({
-      default: m.DecisionTreeMedia,
-    }))
-  ),
-  "confusion-matrix": lazy(() =>
-    import("@components/MediaComponents").then((m) => ({
-      default: m.ConfusionMatrixMedia,
-    }))
-  ),
-  "loss-chart": lazy(() =>
-    import("@components/MediaComponents").then((m) => ({
-      default: m.LossChartMedia,
-    }))
-  ),
-  "data-flow": lazy(() =>
-    import("@components/MediaComponents").then((m) => ({
-      default: m.DataFlowMedia,
-    }))
-  ),
-  transformer: lazy(() =>
-    import("@components/MediaComponents").then((m) => ({
-      default: m.TransformerMedia,
-    }))
-  ),
-  attention: lazy(() =>
-    import("@components/MediaComponents").then((m) => ({
-      default: m.AttentionMedia,
-    }))
-  ),
-  convolution: lazy(() =>
-    import("@components/MediaComponents").then((m) => ({
-      default: m.ConvolutionMedia,
-    }))
-  ),
-  "cnn-architecture": lazy(() =>
-    import("@components/MediaComponents").then((m) => ({
-      default: m.CNNArchitectureMedia,
-    }))
-  ),
-  pooling: lazy(() =>
-    import("@components/MediaComponents").then((m) => ({
-      default: m.PoolingMedia,
-    }))
-  ),
-  "transfer-learning": lazy(() =>
-    import("@components/MediaComponents").then((m) => ({
-      default: m.TransferLearningMedia,
-    }))
-  ),
-  overfitting: lazy(() =>
-    import("@components/MediaComponents").then((m) => ({
-      default: m.OverfittingMedia,
-    }))
-  ),
-  "rag-pipeline": lazy(() =>
-    import("@components/MediaComponents").then((m) => ({
-      default: m.RAGPipelineMedia,
-    }))
-  ),
-  "embedding-space": lazy(() =>
-    import("@components/MediaComponents").then((m) => ({
-      default: m.EmbeddingSpaceMedia,
-    }))
-  ),
-  regularization: lazy(() =>
-    import("@components/MediaComponents").then((m) => ({
-      default: m.RegularizationMedia,
-    }))
-  ),
-};
+import { useContentLinkedState, type StateMarkerInfo, type MediaMarkerInfo } from "@/hooks";
 
 interface MediaRendererProps {
   media: SectionMedia;
-  stateMarkers?: StateMarkerInfo[];
-}
-
-// Loading skeleton for media
-function MediaSkeleton() {
-  return (
-    <Skeleton
-      variant="rounded"
-      width="100%"
-      height={300}
-      sx={{ bgcolor: "rgba(0,0,0,0.1)" }}
-    />
-  );
 }
 
 // Image renderer
@@ -312,54 +212,79 @@ const LottieMedia = memo(function LottieMedia({
   );
 });
 
-// Visualization renderer (pre-built SVG components)
-// Uses discrete states that progress as content markers are scrolled into view
-const VisualizationMedia = memo(function VisualizationMedia({
-  visualizationType,
-  stateMarkers = [],
-}: {
-  visualizationType?: VisualizationType;
-  stateMarkers?: StateMarkerInfo[];
-}) {
-  // Use content-linked state tracking based on markers in content
-  const { state } = useContentLinkedState(stateMarkers);
+/**
+ * Marker-based media renderer with crossfade transitions.
+ * Displays images from media markers, transitioning between them
+ * as the user scrolls through content markers.
+ */
+interface MarkerMediaRendererProps {
+  markers: MediaMarkerInfo[];
+  stateMarkers: StateMarkerInfo[];
+  containerRef?: React.RefObject<HTMLElement | null>;
+}
 
-  if (!visualizationType) return null;
+function MarkerMediaRendererComponent({
+  markers,
+  stateMarkers,
+  containerRef,
+}: MarkerMediaRendererProps) {
+  const { state } = useContentLinkedState(stateMarkers, containerRef);
 
-  // Get stateful component
-  const StatefulComponent = statefulVisualizations[visualizationType];
+  if (markers.length === 0) return null;
 
-  if (StatefulComponent) {
-    return (
-      <Box>
-        <StatefulComponent state={state} />
-      </Box>
-    );
-  }
-
-  // Fallback to static component (lazy loaded)
-  const StaticComponent = staticVisualizationComponents[visualizationType];
-
-  if (!StaticComponent) {
-    return (
-      <Typography color="error">
-        Unknown visualization: {visualizationType}
-      </Typography>
-    );
-  }
+  // Clamp active index to valid range
+  const activeIndex = Math.min(state, markers.length - 1);
 
   return (
-    <Suspense fallback={<MediaSkeleton />}>
-      <StaticComponent />
-    </Suspense>
+    <Box
+      sx={{
+        position: "relative",
+        width: "100%",
+        aspectRatio: "440/380",
+        borderRadius: 2,
+        overflow: "hidden",
+        border: "2px solid #2D2D2D",
+        boxShadow: "4px 4px 0px #2D2D2D",
+        bgcolor: "background.paper",
+      }}
+    >
+      {markers.map((marker, i) => (
+        <Box
+          key={marker.key}
+          sx={{
+            position: i === 0 ? "relative" : "absolute",
+            top: 0,
+            left: 0,
+            width: "100%",
+            height: "100%",
+            opacity: i === activeIndex ? 1 : 0,
+            transition: "opacity 0.4s ease-out",
+          }}
+        >
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={marker.imageUrl}
+            alt={marker.alt || marker.label || ""}
+            style={{
+              width: "100%",
+              height: "100%",
+              objectFit: "contain",
+            }}
+          />
+        </Box>
+      ))}
+    </Box>
   );
-});
+}
+
+export const MarkerMediaRenderer = memo(MarkerMediaRendererComponent);
+MarkerMediaRenderer.displayName = "MarkerMediaRenderer";
 
 /**
  * Generic media renderer component.
  * Renders different media types based on the mediaType field.
  */
-function MediaRendererComponent({ media, stateMarkers }: MediaRendererProps) {
+function MediaRendererComponent({ media }: MediaRendererProps) {
   const { mediaType, caption, aspectRatio } = media;
 
   let content: React.ReactNode = null;
@@ -403,15 +328,6 @@ function MediaRendererComponent({ media, stateMarkers }: MediaRendererProps) {
 
     case "lottie":
       content = <LottieMedia lottieUrl={media.lottieUrl} />;
-      break;
-
-    case "visualization":
-      content = (
-        <VisualizationMedia
-          visualizationType={media.visualizationType}
-          stateMarkers={stateMarkers}
-        />
-      );
       break;
 
     default:

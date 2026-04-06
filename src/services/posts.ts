@@ -37,7 +37,25 @@ const fullPostFields = `
   sections[]{
     _key,
     title,
-    content,
+    content[]{
+      ...,
+      _type == "mediaMarker" => {
+        ...,
+        media->{
+          _id,
+          identifier,
+          label,
+          group,
+          image{
+            ...,
+            asset->{
+              _id,
+              url
+            }
+          }
+        }
+      }
+    },
     media{
       mediaType,
       image{
@@ -73,7 +91,6 @@ const fullPostFields = `
           url
         }
       },
-      visualizationType,
       caption,
       aspectRatio
     }

@@ -3,13 +3,28 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 
 /**
- * State marker info extracted from content blocks
+ * State marker info extracted from content blocks (legacy)
  */
 export interface StateMarkerInfo {
   /** Unique key of the content block */
   key: string;
   /** State index to activate when this marker is centered */
   stateIndex: number;
+}
+
+/**
+ * Media marker info extracted from content blocks.
+ * Each marker references an image to show from the media library.
+ */
+export interface MediaMarkerInfo {
+  /** Unique key of the content block */
+  key: string;
+  /** Resolved image URL from the media asset */
+  imageUrl: string;
+  /** Alt text for the image */
+  alt?: string;
+  /** Label for the marker */
+  label?: string;
 }
 
 /**

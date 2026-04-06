@@ -10,4 +10,5 @@ export { useMediaStates } from "./useMediaStates";
 export {
   useContentLinkedState,
   type StateMarkerInfo,
+  type MediaMarkerInfo,
 } from "./useContentLinkedState";

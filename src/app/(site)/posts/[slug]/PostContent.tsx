@@ -1,17 +1,19 @@
 "use client";
 
-import { memo, useMemo } from "react";
+import { memo, useMemo, useRef } from "react";
 import { Box, Typography } from "@mui/material";
 import { PortableText } from "@portabletext/react";
 import { MediaRenderer } from "@components/MediaRenderer";
+import { MarkerMediaRenderer } from "@components/MediaRenderer";
 import { StickyMedia } from "@components/StickyMedia";
 import type {
   PostSection as PostSectionType,
   CodeBlock,
   MathBlock,
   StateMarker,
+  MediaMarker,
 } from "@/types";
-import type { StateMarkerInfo } from "@/hooks";
+import type { StateMarkerInfo, MediaMarkerInfo } from "@/hooks";
 import styles from "./PostContent.module.css";
 
 interface PostContentProps {
@@ -220,10 +222,22 @@ const portableTextComponents = {
         aria-hidden="true"
       />
     ),
+    mediaMarker: ({ value }: { value: MediaMarker }) => (
+      <Box
+        id={`state-marker-${value._key}`}
+        sx={{
+          // Invisible marker element - used for scroll position tracking
+          height: 0,
+          overflow: "hidden",
+          visibility: "hidden",
+        }}
+        aria-hidden="true"
+      />
+    ),
   },
 };
 
-// Helper to extract state markers from content
+// Helper to extract state markers from content (legacy)
 function extractStateMarkers(
   content: PostSectionType["content"]
 ): StateMarkerInfo[] {
@@ -235,6 +249,31 @@ function extractStateMarkers(
     }));
 }
 
+// Helper to extract media markers from content
+function extractMediaMarkers(
+  content: PostSectionType["content"]
+): { stateMarkers: StateMarkerInfo[]; mediaMarkers: MediaMarkerInfo[] } {
+  const mediaBlocks = content.filter(
+    (block): block is MediaMarker => block._type === "mediaMarker"
+  );
+
+  const stateMarkers: StateMarkerInfo[] = mediaBlocks.map((marker, index) => ({
+    key: marker._key,
+    stateIndex: index,
+  }));
+
+  const mediaMarkers: MediaMarkerInfo[] = mediaBlocks
+    .filter((marker) => marker.media?.image?.asset?.url)
+    .map((marker) => ({
+      key: marker._key,
+      imageUrl: marker.media!.image!.asset!.url!,
+      alt: marker.media?.label || marker.label,
+      label: marker.label,
+    }));
+
+  return { stateMarkers, mediaMarkers };
+}
+
 // Single section renderer
 const SectionRenderer = memo(function SectionRenderer({
   section,
@@ -243,14 +282,22 @@ const SectionRenderer = memo(function SectionRenderer({
   section: PostSectionType;
   index: number;
 }) {
-  const hasMedia = !!section.media;
   const isEven = index % 2 === 0;
+  const sectionRef = useRef<HTMLDivElement>(null);
 
-  // Extract state markers from content for media state tracking
-  const stateMarkers = useMemo(
+  // Extract legacy state markers
+  const legacyStateMarkers = useMemo(
     () => extractStateMarkers(section.content),
     [section.content]
   );
+
+  // Extract media markers (new CMS-driven approach)
+  const { stateMarkers: markerStateMarkers, mediaMarkers } = useMemo(
+    () => extractMediaMarkers(section.content),
+    [section.content]
+  );
+
+  const hasMedia = !!section.media || mediaMarkers.length > 0;
 
   // Section without media - full width
   if (!hasMedia) {
@@ -280,7 +327,7 @@ const SectionRenderer = memo(function SectionRenderer({
 
   // Section with media - split layout
   return (
-    <Box className={styles.sectionWithMedia}>
+    <Box className={styles.sectionWithMedia} ref={sectionRef}>
       <Box
         className={`${styles.contentWrapper} ${
           isEven ? styles.contentLeft : styles.contentRight
@@ -307,7 +354,15 @@ const SectionRenderer = memo(function SectionRenderer({
           </Box>
         </Box>
         <StickyMedia>
-          <MediaRenderer media={section.media!} stateMarkers={stateMarkers} />
+          {mediaMarkers.length > 0 ? (
+            <MarkerMediaRenderer
+              markers={mediaMarkers}
+              stateMarkers={markerStateMarkers}
+              containerRef={sectionRef}
+            />
+          ) : (
+            <MediaRenderer media={section.media!} />
+          )}
         </StickyMedia>
       </Box>
     </Box>

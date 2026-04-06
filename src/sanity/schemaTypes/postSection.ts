@@ -132,36 +132,44 @@ export default defineType({
             },
           },
         }),
-        // State marker for media visualization states
+        // Media marker — references a media asset from the library
         defineArrayMember({
           type: "object",
-          name: "stateMarker",
-          title: "📍 Media State Marker",
+          name: "mediaMarker",
+          title: "📍 Media Marker",
           fields: [
             {
-              name: "stateIndex",
-              title: "State Number",
-              type: "number",
-              description: "Which visualization state to show when this marker is centered (starts at 0)",
-              validation: (Rule) => Rule.required().min(0),
-              initialValue: 0,
+              name: "media",
+              title: "Media Asset",
+              type: "reference",
+              to: [{ type: "mediaAsset" }],
+              description:
+                "Select a media asset from the library to display at this point",
+              validation: (Rule) => Rule.required(),
             },
             {
               name: "label",
               title: "Label (optional)",
               type: "string",
-              description: "A label to help identify this marker in the editor",
+              description:
+                "A label to help identify this marker in the editor",
             },
           ],
           preview: {
             select: {
-              stateIndex: "stateIndex",
+              mediaLabel: "media.label",
+              mediaGroup: "media.group",
               label: "label",
+              media: "media.image",
             },
-            prepare({ stateIndex, label }) {
+            prepare({ mediaLabel, mediaGroup, label, media }) {
+              const title = label || mediaLabel || "Media Marker";
               return {
-                title: `📍 State ${stateIndex ?? 0}${label ? `: ${label}` : ""}`,
-                subtitle: "Media state marker",
+                title: `📍 ${title}`,
+                subtitle: mediaGroup
+                  ? `Group: ${mediaGroup}`
+                  : "Media marker",
+                media,
               };
             },
           },

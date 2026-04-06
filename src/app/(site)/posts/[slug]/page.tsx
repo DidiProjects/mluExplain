@@ -1,8 +1,8 @@
 import { notFound } from "next/navigation";
-import { Container, Typography, Box, Chip } from "@mui/material";
-import { PortableText } from "@portabletext/react";
+import { Typography, Box, Chip } from "@mui/material";
 import { getPostBySlug, getAllPostSlugs } from "@services/posts";
 import { urlFor } from "@lib/sanity";
+import { PostContent } from "./PostContent";
 
 export const revalidate = 60;
 
@@ -27,113 +27,118 @@ export default async function PostPage({ params }: PostPageProps) {
     ? urlFor(post.mainImage).width(1200).height(600).url()
     : undefined;
 
+  // Use excerpt if available, otherwise extract from body
+  const description =
+    post.excerpt ||
+    post.body?.find(
+      (block: { _type: string; style?: string }) =>
+        block._type === "block" && block.style === "normal"
+    )?.children?.[0]?.text ||
+    "";
+
   return (
-    <Container maxWidth="md" sx={{ py: 6 }}>
-      {/* Title */}
-      <Typography
-        variant="h1"
+    <Box sx={{ width: "100%" }}>
+      {/* Hero Header */}
+      <Box
         sx={{
-          fontSize: { xs: "1.75rem", md: "2.5rem" },
-          mb: 2,
+          maxWidth: "800px",
+          mx: "auto",
+          px: { xs: 2, md: 4 },
+          py: 6,
           textAlign: "center",
         }}
       >
-        {post.title}
-      </Typography>
-
-      {/* Meta: author + date + categories */}
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          gap: 2,
-          mb: 4,
-          flexWrap: "wrap",
-        }}
-      >
-        {post.author?.name && (
-          <Typography variant="body2" color="text.secondary">
-            by {post.author.name}
-          </Typography>
-        )}
-        {post.publishedAt && (
-          <Typography variant="body2" color="text.secondary">
-            {new Date(post.publishedAt).toLocaleDateString("pt-BR", {
-              year: "numeric",
-              month: "long",
-              day: "numeric",
-            })}
-          </Typography>
-        )}
-        {post.categories?.map((cat) => (
-          <Chip
-            key={cat.title}
-            label={cat.title}
-            size="small"
-            sx={{
-              backgroundColor: "secondary.light",
-              color: "primary.dark",
-              fontWeight: 600,
-            }}
-          />
-        ))}
-      </Box>
-
-      {/* Main Image */}
-      {imageUrl && (
-        <Box
+        {/* Title */}
+        <Typography
+          variant="h1"
           sx={{
-            mb: 4,
-            borderRadius: 3,
-            overflow: "hidden",
-            boxShadow: "0 4px 20px rgba(0,0,0,0.1)",
+            fontSize: { xs: "2rem", md: "3rem" },
+            mb: 2,
+            color: "text.primary",
+            fontFamily: '"Caveat", cursive',
           }}
         >
-          <Box
-            component="img"
-            src={imageUrl}
-            alt={post.title}
-            sx={{ width: "100%", display: "block" }}
-          />
-        </Box>
-      )}
+          {post.title}
+        </Typography>
 
-      {/* Body */}
-      <Box
-        sx={{
-          "& p": { mb: 2, lineHeight: 1.8, color: "text.secondary" },
-          "& h2": {
-            mt: 4,
-            mb: 2,
-            fontWeight: 700,
-            color: "text.primary",
-          },
-          "& h3": { mt: 3, mb: 1.5, fontWeight: 600 },
-          "& blockquote": {
-            borderLeft: "4px solid",
-            borderColor: "secondary.main",
-            pl: 3,
-            py: 1,
-            my: 2,
-            fontStyle: "italic",
-            color: "text.secondary",
-          },
-          "& img": {
-            maxWidth: "100%",
-            borderRadius: 2,
-            my: 2,
-          },
-          "& ul": { pl: 3, mb: 2 },
-          "& li": { mb: 0.5 },
-          "& a": {
-            color: "secondary.dark",
-            textDecoration: "underline",
-          },
-        }}
-      >
-        {post.body && <PortableText value={post.body} />}
+        {/* Meta: author + date + categories */}
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            gap: 2,
+            mb: 4,
+            flexWrap: "wrap",
+          }}
+        >
+          {post.author?.name && (
+            <Typography variant="body2" color="text.secondary">
+              por {post.author.name}
+            </Typography>
+          )}
+          {post.publishedAt && (
+            <Typography variant="body2" color="text.secondary">
+              {new Date(post.publishedAt).toLocaleDateString("pt-BR", {
+                year: "numeric",
+                month: "long",
+                day: "numeric",
+              })}
+            </Typography>
+          )}
+          {post.categories?.map((cat) => (
+            <Chip
+              key={cat.title}
+              label={cat.title}
+              size="small"
+              sx={{
+                backgroundColor: "secondary.light",
+                color: "primary.dark",
+                fontWeight: 600,
+              }}
+            />
+          ))}
+        </Box>
+
+        {/* Main Image */}
+        {imageUrl && (
+          <Box
+            sx={{
+              mb: 4,
+              borderRadius: 3,
+              overflow: "hidden",
+              border: "2px solid #2D2D2D",
+              boxShadow: "6px 6px 0px #2D2D2D",
+            }}
+          >
+            <Box
+              component="img"
+              src={imageUrl}
+              alt={post.title}
+              sx={{ width: "100%", display: "block" }}
+            />
+          </Box>
+        )}
+
+        {/* Description */}
+        {description && (
+          <Typography
+            variant="body1"
+            sx={{
+              fontSize: { xs: "1.1rem", md: "1.25rem" },
+              lineHeight: 1.8,
+              color: "text.secondary",
+              maxWidth: 700,
+              mx: "auto",
+            }}
+          >
+            {description}
+          </Typography>
+        )}
       </Box>
-    </Container>
+
+      {/* Topic Sections */}
+      <PostContent sections={post.sections || []} />
+    </Box>
   );
 }

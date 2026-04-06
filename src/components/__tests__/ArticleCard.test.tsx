@@ -1,7 +1,7 @@
 import { render, screen } from "@testing-library/react";
 import { describe, it, expect, vi } from "vitest";
 import ArticleCard from "@components/ArticleCard";
-import type { Post } from "@services/posts";
+import type { PostCard } from "@/types";
 
 vi.mock("@lib/sanity", () => ({
   urlFor: () => ({
@@ -13,10 +13,10 @@ vi.mock("@lib/sanity", () => ({
   }),
 }));
 
-const mockPost: Post = {
+const mockPost: PostCard = {
   _id: "1",
   title: "Decision Trees",
-  slug: { current: "decision-trees" },
+  slug: { _type: "slug", current: "decision-trees" },
   author: { name: "John Doe" },
   mainImage: {
     _type: "image",
@@ -24,7 +24,6 @@ const mockPost: Post = {
   },
   categories: [{ title: "Supervised Learning" }],
   publishedAt: "2026-01-15T00:00:00Z",
-  body: [],
 };
 
 describe("ArticleCard", () => {

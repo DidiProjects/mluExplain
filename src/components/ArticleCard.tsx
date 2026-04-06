@@ -11,10 +11,10 @@ import {
 } from "@mui/material";
 import Link from "next/link";
 import { urlFor } from "@lib/sanity";
-import type { Post } from "@services/posts";
+import type { PostCard } from "@/types";
 
 interface ArticleCardProps {
-  post: Post;
+  post: PostCard;
 }
 
 export default function ArticleCard({ post }: ArticleCardProps) {

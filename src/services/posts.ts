@@ -74,14 +74,6 @@ const fullPostFields = `
         }
       },
       visualizationType,
-      visualization->{
-        type,
-        title,
-        subtitle,
-        stateLabels,
-        theme,
-        hint
-      },
       caption,
       aspectRatio
     }

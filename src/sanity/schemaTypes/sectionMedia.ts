@@ -128,22 +128,12 @@ export default defineType({
       hidden: ({ parent }) => parent?.mediaType !== "lottie",
     }),
 
-    // Interactive Visualization (CMS-driven configuration)
-    defineField({
-      name: "visualization",
-      title: "Visualization Configuration",
-      type: "reference",
-      to: [{ type: "visualizationConfig" }],
-      description: "Select a visualization configuration from the library",
-      hidden: ({ parent }) => parent?.mediaType !== "visualization",
-    }),
-
-    // Legacy field for backwards compatibility (deprecated)
+    // Interactive Visualization (code-based)
     defineField({
       name: "visualizationType",
-      title: "Visualization Type (Deprecated)",
+      title: "Visualization Type",
       type: "string",
-      description: "⚠️ Deprecated - Use the new Visualization Configuration above",
+      description: "Type of pre-built visualization component",
       options: {
         list: [
           { title: "Neural Network", value: "neural-network" },
@@ -164,7 +154,7 @@ export default defineType({
           { title: "Regularization", value: "regularization" },
         ],
       },
-      hidden: ({ parent }) => parent?.mediaType !== "visualization" || !!parent?.visualization?.type,
+      hidden: ({ parent }) => parent?.mediaType !== "visualization",
     }),
 
     // Common fields

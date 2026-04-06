@@ -11,7 +11,6 @@ export const schemaTypes = [
   post,
   author,
   category,
-  mediaAsset
   category,
   mediaAsset,
   // Object types

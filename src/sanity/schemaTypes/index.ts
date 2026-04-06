@@ -4,6 +4,7 @@ import post from './post'
 import author from './author'
 import postSection from './postSection'
 import sectionMedia from './sectionMedia'
+import visualizationConfig from './visualizationConfig'
 
 export const schemaTypes = [
   // Document types
@@ -14,4 +15,5 @@ export const schemaTypes = [
   blockContent,
   postSection,
   sectionMedia,
+  visualizationConfig,
 ]

@@ -7,8 +7,8 @@ import type { SectionMedia, VisualizationType } from "@/types";
 import { urlFor } from "@lib/sanity";
 import { useContentLinkedState, type StateMarkerInfo } from "@/hooks";
 
-// Import stateful visualization components (states-based animations)
-import { statefulVisualizations } from "@components/MediaComponentsStateful";
+// Import CMS-driven stateful visualization components
+import { statefulVisualizations } from "@components/MediaComponentsStatefulCMS";
 
 // Lazy load static visualizations as fallback
 const staticVisualizationComponents = {
@@ -314,36 +314,42 @@ const LottieMedia = memo(function LottieMedia({
 
 // Visualization renderer (pre-built SVG components)
 // Uses discrete states that progress as content markers are scrolled into view
+// Now supports CMS-driven configuration
 const VisualizationMedia = memo(function VisualizationMedia({
   visualizationType,
+  visualization,
   stateMarkers = [],
 }: {
   visualizationType?: VisualizationType;
+  visualization?: SectionMedia["visualization"];
   stateMarkers?: StateMarkerInfo[];
 }) {
   // Use content-linked state tracking based on markers in content
   const { state } = useContentLinkedState(stateMarkers);
 
-  if (!visualizationType) return null;
+  // Determine the visualization type (new config takes precedence)
+  const type = visualization?.type || visualizationType;
+  
+  if (!type) return null;
 
   // Get stateful component
-  const StatefulComponent = statefulVisualizations[visualizationType];
+  const StatefulComponent = statefulVisualizations[type];
 
   if (StatefulComponent) {
     return (
       <Box>
-        <StatefulComponent state={state} />
+        <StatefulComponent state={state} config={visualization} />
       </Box>
     );
   }
 
   // Fallback to static component (lazy loaded)
-  const StaticComponent = staticVisualizationComponents[visualizationType];
+  const StaticComponent = staticVisualizationComponents[type];
 
   if (!StaticComponent) {
     return (
       <Typography color="error">
-        Unknown visualization: {visualizationType}
+        Unknown visualization: {type}
       </Typography>
     );
   }
@@ -409,6 +415,7 @@ function MediaRendererComponent({ media, stateMarkers }: MediaRendererProps) {
       content = (
         <VisualizationMedia
           visualizationType={media.visualizationType}
+          visualization={media.visualization}
           stateMarkers={stateMarkers}
         />
       );
